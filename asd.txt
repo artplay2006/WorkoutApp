@@ -1,0 +1,99 @@
+прошлый цвет кнопок: 94; 148; 255
+Impact; 26,25pt; style=Bold, Italic
+310; 45
+
+form color:Control
+
+image: location 26,104
+label: location 259,139
+gunaimagebutton: 695,104
+datagridview 490.12
+using Guna.UI2.WinForms;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel;
+using System.Data;
+using System.Data.OleDb;
+using System.Drawing;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+using System.Windows.Forms;
+
+namespace up
+{
+    public partial class Form3 : Form
+    {
+        public static string connectString = "Provider=Microsoft.ACE.OLEDB.12.0;Data Source=Database.mdb;";
+        DataTable dataTable = new DataTable();
+        public Form3()
+        {
+            InitializeComponent();
+            LoadDataToDataGridView(dataGridView1);
+            pictureBox1.Image = Image.FromFile(dataTable.Rows[0]["image"].ToString());
+            pictureBox1.SizeMode = PictureBoxSizeMode.StretchImage;
+            label1.Text = dataTable.Rows[0]["title"].ToString();
+            label1.Font = new Font("Impact", 12, FontStyle.Italic);
+            int xImg = pictureBox1.Location.X, yImg = pictureBox1.Location.Y;//26 104
+            int xLbl = label1.Location.X, yLbl = label1.Location.Y;//259 139
+            int xProblm = guna2ImageButton1.Location.X, yProblm = guna2ImageButton1.Location.Y;//695 104
+            PictureBox[] Imgs = new PictureBox[dataTable.Rows.Count];
+            Imgs[0] = pictureBox1;
+            Label[] Lbls = new Label[dataTable.Rows.Count];
+            Lbls[0] = label1;
+            Guna2ImageButton[] ProblemImgs = new Guna2ImageButton[dataTable.Rows.Count];
+            ProblemImgs[0] = guna2ImageButton1;
+            for (int i = 1; i < dataTable.Rows.Count; i++)
+            {
+                yImg += 120; yLbl += 120;
+                Lbls[i] = new Label();
+                Lbls[i].Text = dataTable.Rows[i]["title"].ToString();
+                Lbls[i].Location = new Point(xLbl, yLbl);
+                Lbls[i].AutoSize = true;
+                Lbls[i].Font = new Font("Impact", 12, FontStyle.Italic);
+                this.Controls.Add(Lbls[i]);
+                Imgs[i] = new PictureBox();
+                Imgs[i].Image = Image.FromFile(dataTable.Rows[i]["image"].ToString());
+                Imgs[i].Location = new Point(xImg, yImg);
+                Imgs[i].SizeMode = PictureBoxSizeMode.StretchImage;
+                Imgs[i].Size = new Size(173, 86);
+                Imgs[i].Visible = true;
+                Imgs[i].Enabled = true;
+                this.Controls.Add(Imgs[i]);
+                //Imgs[i].Location = new Point(xImg, yImg);
+
+            }
+            guna2HtmlLabel1.Text = Form2.titleOfTrening;
+
+        }
+        public void LoadDataToDataGridView(DataGridView dataGridView)
+        {
+            using (OleDbConnection connection = new OleDbConnection(connectString))
+            {
+                connection.Open();
+                //"SELECT * FROM Exercises"
+                string query = "SELECT * FROM Exercises WHERE [id category] = 'ganteli_backbiceps'";
+
+                using (OleDbCommand command = new OleDbCommand(query, connection))
+                {
+                    using (OleDbDataAdapter adapter = new OleDbDataAdapter(command))
+                    {
+                        //DataTable dataTable = new DataTable();
+                        adapter.Fill(dataTable);
+
+                        dataGridView.DataSource = dataTable;
+                    }
+                }
+            }
+        }
+        private void guna2ImageButton1_Click(object sender, EventArgs e)
+        {
+
+        }
+
+        private void Form3_Load(object sender, EventArgs e)
+        {
+
+        }
+    }
+}
